@@ -15,17 +15,48 @@ var allTimeCampers = getInfo(allTimeUrl);
 
 function BoardList(props) {
     const numbers = props.numbers;
-    const listItems = numbers.map((number, index) =>
+    const urls = props.numbers.map(function (item) {
+        return 'https://www.freecodecamp.com/' + item['username']
+    });
+    let listItems = numbers.map(function (number, index) {
+        if (index % 2 == 0) {
+            return (
+                <tr key={index}>
+                    <td className='number'>{index + 1}</td>
+                    <td className='username'>
+                        <a href={urls[index]}>
+                            <img src={number['img']}/>{number['username']}
+                        </a>
+                    </td>
+                    <td className='alltimePoints'>{number['alltime']}</td>
+                    <td className='recentPoints'>{number['recent']}</td>
+                </tr>)
+        } else {
+            return (
+                <tr key={index} className='dark'>
+                    <td className='number'>{index + 1}</td>
+                    <td className='username'>
+                        <a href={urls[index]}>
+                            <img src={number['img']}/>{number['username']}
+                        </a>
+                    </td>
+                    <td className='alltimePoints'>{number['alltime']}</td>
+                    <td className='recentPoints'>{number['recent']}</td>
+                </tr>)
+        }
 
-            <tr>
-                <td className='number'>{index + 1}</td>
-                <td className='username'><img src={number['img']}/>{number['username']}</td>
-                <td className='alltimePoints'>{number['alltime']}</td>
-                <td className='recentPoints'>{number['recent']}</td>
-            </tr>
-    );
+    });
+
     return (
-        <table className='container'>{listItems}</table>
+
+        <tbody>
+        <tr className='dark'>
+            <td className='number'>Number</td>
+            <td className='username'>Username</td>
+            <td className='alltimePoints'>All time points</td>
+            <td className='recentPoints'>Points in past 30 days</td>
+        </tr>
+        {listItems}</tbody>
     );
 }
 
