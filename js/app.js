@@ -10,58 +10,85 @@ function getInfo(url) {
     return JSON.parse(xhr.responseText);
 }
 
-var lastDaysCampers = getInfo(lastDaysUrl);
 var allTimeCampers = getInfo(allTimeUrl);
+var sortedAllTime = allTimeCampers.sort(function (a, b) {
+    return b.alltime - a.alltime
+});
 
-function BoardList(props) {
-    const numbers = props.numbers;
-    const urls = props.numbers.map(function (item) {
-        return 'https://www.freecodecamp.com/' + item['username']
-    });
-    let listItems = numbers.map(function (number, index) {
-        if (index % 2 == 0) {
-            return (
-                <tr key={index}>
-                    <td className='number'>{index + 1}</td>
-                    <td className='username'>
-                        <a href={urls[index]}>
-                            <img src={number['img']}/>{number['username']}
-                        </a>
-                    </td>
-                    <td className='alltimePoints'>{number['alltime']}</td>
-                    <td className='recentPoints'>{number['recent']}</td>
-                </tr>)
-        } else {
-            return (
-                <tr key={index} className='dark'>
-                    <td className='number'>{index + 1}</td>
-                    <td className='username'>
-                        <a href={urls[index]}>
-                            <img src={number['img']}/>{number['username']}
-                        </a>
-                    </td>
-                    <td className='alltimePoints'>{number['alltime']}</td>
-                    <td className='recentPoints'>{number['recent']}</td>
-                </tr>)
+var BoardList = React.createClass({
+    getInitialState: function () {
+        return {
+            list: sortedAllTime
         }
+    },
+    sortByRecent: function (e) {
+        e.preventDefault();
+        var sortedRecent = allTimeCampers.sort(function (a, b) {
+            return b.recent - a.recent
+        });
+        this.setState({
+            list: sortedRecent
+        });
+    },
+    sortByAllTime: function (e) {
+        e.preventDefault();
+        var sortedAllTime = allTimeCampers.sort(function (a, b) {
+            return b.alltime - a.alltime
+        });
+        this.setState({
+            list: sortedAllTime
+        });
+    },
+    render: function () {
+        const numbers = this.props.numbers;
+        const urls = this.props.numbers.map(function (item) {
+            return 'https://www.freecodecamp.com/' + item['username']
+        });
+        let listItems = numbers.map(function (number, index) {
+            if (index % 2 == 0) {
+                return (
+                    <tr key={index}>
+                        <td className='number'>{index + 1}</td>
+                        <td className='username'>
+                            <a href={urls[index]}>
+                                <img src={number['img']}/>{number['username']}
+                            </a>
+                        </td>
+                        <td className='alltimePoints'>{number['alltime']}</td>
+                        <td className='recentPoints'>{number['recent']}</td>
+                    </tr>)
+            } else {
+                return (
+                    <tr key={index} className='dark'>
+                        <td className='number'>{index + 1}</td>
+                        <td className='username'>
+                            <a href={urls[index]}>
+                                <img src={number['img']}/>{number['username']}
+                            </a>
+                        </td>
+                        <td className='alltimePoints'>{number['alltime']}</td>
+                        <td className='recentPoints'>{number['recent']}</td>
+                    </tr>)
+            }
 
-    });
+        });
 
-    return (
+        return (
 
-        <tbody>
-        <tr className='dark'>
-            <td className='number'>Number</td>
-            <td className='username'>Username</td>
-            <td className='alltimePoints'>All time points</td>
-            <td className='recentPoints'>Points in past 30 days</td>
-        </tr>
-        {listItems}</tbody>
-    );
-}
+            <tbody>
+            <tr className='dark'>
+                <td className='number'>Number</td>
+                <td className='username'>Username</td>
+                <td className='alltimePoints' onClick={this.sortByAllTime}><a href='#'>All time points</a></td>
+                <td className='recentPoints' onClick={this.sortByRecent}><a href='#'>Points in past 30 days</a></td>
+            </tr>
+            {listItems}</tbody>
+        )
+    }
+});
 
 
 ReactDOM.render(
-    <BoardList numbers={lastDaysCampers}/>,
+    <BoardList numbers={sortedAllTime}/>,
     document.getElementById('root')
 )
